@@ -307,23 +307,23 @@ const App: React.FC = () => {
 
   // Auto-polling untuk halaman data absensi
   useEffect(() => {
-    let pollingInterval: number | null = null;
+    let pollingInterval: ReturnType<typeof setInterval> | null = null;
 
+    // Saat mulai polling
     if (currentPage === "data" && userRole === "Guru" && isLoggedIn) {
-      setIsPolling(true);
-      fetchAttendanceData(false); // false = tidak show loading
+      fetchAttendanceData(false); // tanpa loading
 
+      // Simpan ID interval
       pollingInterval = setInterval(() => {
-        fetchAttendanceData(false); // polling tanpa loading indicator
-      }, 5000); // setiap 5 detik
-    } else {
-      setIsPolling(false);
+        fetchAttendanceData(false); // ambil data setiap 5 detik
+      }, 5000);
     }
 
+    // Jangan lupa hentikan saat tidak perlu
     return () => {
       if (pollingInterval) {
-        clearInterval(pollingInterval);
-        setIsPolling(false);
+        clearInterval(pollingInterval); // hentikan polling
+        pollingInterval = null;
       }
     };
   }, [currentPage, userRole, isLoggedIn]);
